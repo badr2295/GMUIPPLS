@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل زيارة جديدة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>مرحبًا بك في موقعنا</h1>
+    <p id="message">جارٍ تسجيل زيارتك...</p>
+
+    <script>
+        // جلب عنوان IP باستخدام خدمة API عامة
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const userIP = data.ip;
+
+                // إرسال عنوان IP إلى ملف PHP
+                return fetch('log-ip.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ip: userIP })
+                });
+            })
+            .then(response => response.text())
+            .then(message => {
+                // عرض رسالة النجاح أو الخطأ
+                document.getElementById('message').textContent = message;
+            })
+            .catch(error => {
+                console.error('حدث خطأ:', error);
+                document.getElementById('message').textContent = 'حدث خطأ أثناء تسجيل الزيارة.';
+            });
+    </script>
+</body>
+</html>
